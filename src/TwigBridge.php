@@ -24,15 +24,18 @@ final class TwigBridge implements TemplateRendererInterface
         }
 
         if ($templatePaths === []) {
-            $templatePaths = [getcwd() . '/templates'];
+            $defaultPath = getcwd() . '/templates';
+            $templatePaths = is_dir($defaultPath) ? [$defaultPath] : [];
         }
 
         $loaderClass = self::TWIG_FILESYSTEM_LOADER_CLASS;
         $loader = new $loaderClass($templatePaths);
 
+        $cache = $cacheDir ?? false;
+
         $environmentClass = self::TWIG_ENVIRONMENT_CLASS;
         $this->twig = new $environmentClass($loader, [
-            'cache' => $cacheDir,
+            'cache' => $cache,
             'auto_reload' => true,
             'strict_variables' => false,
         ]);
